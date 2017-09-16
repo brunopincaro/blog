@@ -25,6 +25,32 @@ Using the MVC model
 -------------------
 */
 
+/* AUTHENTICATION ROUTES */
+
+// required using Laravel's AuthController
+Route::get('auth/login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm'] ); // form
+Route::post('auth/login', 'Auth\LoginController@login'); // action when login form is submited
+Route::get('auth/logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout'] );
+
+/* REGISTRATION ROUTES */
+// required using Laravel's AuthController
+Route::get('auth/register', ['as' => 'register', 'uses' => 'Auth\RegisterController@showRegistrationForm'] ); // register form
+Route::post('auth/register', 'Auth\RegisterController@register'); // action to save the data to the DB
+
+/* PASSWORD RESETS ROUTES */
+
+// the form
+// Route::get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+// we need to pass a token because Laravel adds it automatically to the url if the email address exists in the DB
+// the ? means that we aren't always looking for a token in the url, it may or may not exist and the url will be valid; it is an optional field
+Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset'); // in laravel 5.4 we don't need the '?'
+
+Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset'); // the action for the reset form submit
+
+/* PUBLIC ROUTES */
+
 // route for showing posts publically
 // create a blog controller to deal with all the posts and comments : php artisan make:controller BlogController
 // we need to secure the data retrieved through 'slug', so we need to tell laravel to only go to the controller if the, in this case, {slug} matches certains parameters : Route::get(...)->where('slug', 'validation rules')

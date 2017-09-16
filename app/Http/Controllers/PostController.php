@@ -8,6 +8,11 @@ use Session;
 
 class PostController extends Controller
 {
+    // Only give access to Authenticated users, no guests
+    public function __construct() {
+        $this->middleware('auth', ['except' => '']);
+    }
+
     /**
      * Display a listing of the resource.
      *

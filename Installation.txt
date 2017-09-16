@@ -1,0 +1,749 @@
+https://laravelcollective.com/
+http://laravel-recipes.com/
+https://laravel.com/
+
+To put a site online, change the .env from ‘development’ to ‘production’
+
+Manage the errors file templates in the ‘error’ folder
+
+Update composer frequently :
+	composer selfupdate
+	composer update
+
+App not working after changing directories :
+https://stackoverflow.com/questions/35261746/laravel-error-invalidargumentexception#35262399
+  php artisan config:cache
+  php artisan config:clear
+
+INTERPELATION " " : to be able to use php code inside, " this is a $variable "
+
+
+
+
+BLADE TEMPLATING
+----------------
+
+PHP		BLADE
+echo		{{ }}
+execute code	{!! !!} loads raw code, keeping all the html, javascript, php... tag
+
+
+
+USING CLASSES
+-------------
+
+Every time we use classes, we need to make sure that they are named space loaded in our controller or model 
+
+use ...
+
+
+
+
+LINK ROUTES
+-----------
+$posts = Post::all();
+
+@foreach ($posts as $post)
+	
+	{!! Html::linkRoute('posts.edit', 'Edit', array($post->id), array('class' => 'btn btn-default')) !!}
+
+	or
+
+	<a href="{{ route('posts.edit', $post->edit) }}" class="btn btn-default">Edit</a>
+
+@endforeach
+
+
+
+
+INSTALL COMPOSER
+----------------
+
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+
+php -r "if (hash_file('SHA384', 'composer-setup.php') === '669656bab3166a7aff8a7506b8cb2d1c292f042046c5a994c43155c0be6190fa0355160742ab2e1c88d40d5be660b410') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+
+php composer-setup.php
+
+mv composer.phar /usr/local/bin/composer
+
+If error "/usr/local/bin/composer: No such file or directory" then you must create the directory manually before proceeding: mkdir -p /usr/local/bin
+
+php -r "unlink('composer-setup.php');"
+
+
+
+INSTALL LARAVEL GLOBALLY
+------------------------
+
+php composer.phar global require "laravel/installer"
+
+export PATH="~/.composer/vendor/bin:$PATH"
+
+
+
+FRESH LARAVEL PROJECT
+---------------------
+
+the name of the project, for example: blog
+
+in the directory you specify :
+	laravel new blog
+
+or via composer :
+	composer create-project --prefer-dist laravel/laravel blog
+	or
+	php composer.phar create-project --prefer-dist laravel/laravel blog
+
+
+
+RUN THE APP LOCALLY WITH ARTISAN
+--------------------------------
+
+in the project folder run the command :
+	php artisan serve
+	
+or to use another environment :
+	php artisan serve --env=nameOfTheEnvFile
+
+and access by default the site through :
+	http://localhost:8000
+
+
+
+MVC
+---
+
+Models are stored in the “app” root folder, by default there’s already the “User” model (User.php)
+Model are named by beginning in capital letter an always using the singular
+
+Views are stored in “resources/views/“ folder
+
+Controllers are in “app/Http/Controllers”
+
+
+
+ROUTES
+------
+
+Located in the “routes” folder
+Routes are the app’s pages/urls
+Routes tell Laravel what urls to expect and what to do with that url
+
+To add new routes, always keep the deeper levels on top, like :
+	Route::get(‘user/id’, function () {
+    		return view(‘user’);
+	});
+
+	Route::get(‘user’, function () {
+	    return view(‘user’);
+	});
+
+	These are only View apps, not MVC, because there is no controller working
+
+Best practise is to point the route to a controller and then the controller processes the logic and then renders a view from the controller
+
+
+
+CONTROLLERS
+-----------
+
+To route through a controller :
+	1. Create the controller
+	2. Namespace all the controllers in the folder app/Http/Controllers
+		namespaces are little containers and boxes
+		it says witch folder it belongs to, you can move along inside the folder but can’t leave the folder unless you have explicit permission
+		
+		namesape App\Http\Controllers;
+	
+	3. To navigate outside the namesake folder we use the use keyword
+		
+		use Illuminate\file;
+
+	4. the controller is a php class, so start a controller with “class ClassName extends Controller {}”
+	5. preface all controllers functions/actions name with the type of request it’s going to make : getFunctionName, postFunctionName…
+	6. in the routes file, we replace the function by the controller name and preface the action name with an @ :
+	
+		Route::get(‘user’, ‘UsersController@getUSer’);
+
+	7. To render/display the view :
+
+		return view(‘viewFileName’);
+
+	8. Organise the views by the controller file
+	9. You can use “.” instead of “/“ to tell the path to the views
+
+
+
+PASSING DATA TO A VIEW
+----------------------
+
+The controller creates/pulls the data and then has to pass it to the views
+
+To pass the data to the view we use the with() method :
+	return view(‘page’)->with(“varNameInView”, $dataToPass);
+
+	a shorthand :
+
+	we attach the capitalised var name to the with and pass 
+
+	return view(‘page’)->withVarNameInView( $dataToPass);
+
+We can attach as many withDataToPass as we want :
+	return view(‘page’)->withVarNameInView( $dataToPass)->withVar2( $data2 );
+
+In this situation, is better to pass an array :
+	$data = [
+		‘var1’ => 
+	];
+
+	return view(‘page’)->withVarNameInView( );
+
+
+To access the data in the view file :
+	{{ $varNameInView }}
+
+The view only has access to the controller variables that are passed
+
+
+
+LAYOUTS WITH BLADE
+------------------
+
+Create a template file that contains the code common to all pages
+
+Blade starts with “@“
+
+	@yield(’areaName’) : this content will be different form the rest of the template file, it will inject the code/content defined by the section ’areaName’
+	@extends(‘folder.to.mainTemplateFileName’) : tells the file path relative to the views root folder to which inject the @section content
+	@section(‘areaName’) <code> @end
+	
+	you can have as much @yield as you want in one template file
+
+
+
+PARTIALS WITH BLADE
+-------------------
+
+Partials allows us to extract the content even further :
+	extract code out into its own file
+	maybe it’s to be repeated or maybe it’s for organisation
+	specially useful for navigation
+
+It is best practice to name the partials file by beginning with “_”
+
+Call the partials with @include(‘path.to.partials._file’)
+
+
+
+MODEL BASICS
+------------
+
+A model relates to a table and is how the program talks back and forward, sets information and gets information from the database table
+
+Generally, there’s one model by each database table
+
+In a table database, each column is a piece of information that we store : id, title, article…
+
+Laravel expects two timestamps for each table : created_at and updated_at
+
+To generate a model we use the artisan “make” command. This command allows us to automatically generate things like controllers, views, models, migrations…
+When creating a model, is also useful to create a migration, which is the way of Laravel to create and edit the database tables for us. We can edit the database through the Laravel’s migrations php.
+	php artisan make:model NameOfTheModel --migration
+	or the shortcake for the migration
+	php artisan make:model NameOfTheModel -m
+
+The models are created in “app”, in the example : “app/NameOfTheModel.php”
+The migrations are created in “database/migrations/xxxx_xx_xx_xxxxxx_create_nameofthemodels_table.php” where “xxxx_xx_xx_xxxxxx” is the timestamp of the creation of the migration file
+
+
+
+MIGRATION BASICS
+----------------
+https://laravel.com/docs/5.4/migrations#columns
+
+“Column types”
+	->
+
+“Column modifiers“ :
+	“->unsigned()” type will ignore the positive and negative sign of an integer, consuming less memory
+	“->nullable()” tells it’s not a required field 
+
+To Laravel connect to the database, we use the “.env” type file
+
+Connections type in “config/database.php”
+
+Resuming :
+	Create the database
+	Edit the “.env” file
+	
+Run the migrations :
+	php artisan migrate
+
+If error, in “app/Providers/AppServiceProvider.php” :
+	https://laravel-news.com/laravel-5-4-key-too-long-error
+
+
+
+CRUD AND RESTFUL ROUTES
+-----------------------
+
+Crud : resource management in the application, create, read, update, delete/destroy
+
+Create the controller with the command (app/Http/Controllers):
+	php artisan make:controller NameController --resource (name in singular and ending in Controller and —resource to tell it’s a CRUD)
+
+Create the routes (routes/web.php) for all the controller actions :
+	the url will be in the type “http://domain.com/posts/…”
+	because it was created using the option resources, we just need to do :
+	Route::resources(‘posts’, ‘PostController’);
+
+To check if the routes are working :
+	php artisan route:list
+
+
+
+
+CREATE FUNCTIONS AND FORMS
+--------------------------
+
+Insert Lararavel’s 4 form helpers in Laravel 5 :
+	http://laravelcollective.com > Forms & HTML
+
+Then
+	composer update
+
+Use
+	https://laravelcollective.com/docs/master/html#opening-a-form
+
+WORKING WITH FORMS
+	1.	Open a form
+
+		{!! Form::open(['url' => ‘posts’]) !!}
+			the url is the one we want to submit the form to
+		    	we want to store the data, using PostController@store method that has ‘posts’ as url for post method
+		{!! Form::close() !!}
+
+
+		it’s better to use the name routes by passing the parameter ‘route’ instead of ‘url’
+		access this info through “php artisan route:list”
+
+		{!! Form::open([‘route’ => ‘posts.store’]) !!}
+			(...)
+
+
+
+INSERT DATA
+-----------
+
+In the PostController@store
+
+1. validate the data matching the criteria of the form fields and/or database
+2. store in the database
+3. redirect the user
+
+
+
+
+VALIDATE DATA
+-------------
+https://laravel.com/docs/5.4/validation#available-validation-rules
+Some rules :
+	accepted : for checkboxes
+	active_url : check that there’s a server/dns at this address and that it’s not a dummy url
+
+In the controller method:
+	$this->validate($request, array(
+		// rules to validate
+	));
+
+If the validation fails, the user is redirect back to PostController@create method
+
+
+
+STORE THE DATA
+--------------
+Eloquent
+
+Create a new instance of the model (in our example) Post
+	$post = new Post;
+
+Add data to this new Post object that we’ve created, the $post
+	$post->title = $request->title;
+
+	the ‘title’ in post is the table column name
+	the ‘title’ in $request is the input name on the form
+
+Save the object $post to the database
+	$post->save();
+
+Redirect the user
+	return redirect()->route(‘posts.show’, $post->id); //we pass the post id in the @nd parameter because it is needed in the route name posts.show where his url = /posts/{id}
+
+If got error “laravel SQLSTATE[HY000] [2002] Connection refused”
+	php artisan config:cache
+
+
+
+
+JAVASCRIPT FORM VALIDATION
+--------------------------
+http://parsleyjs.org/
+
+As we are only using the form on the posts page, we are loading the scripts only on this page : resources/views/posts/create.blade.php
+
+1. Load jQuery
+
+We will use the Html helper, loaded in “Creating functions and forms” : Html::style() and Html::script()
+2. Load Parsley css
+3. Load Parsley js
+
+4. Add data-parsley-validate to our form tags
+http://parsleyjs.org/doc/index.html#installation
+
+5. Add HTML 5 attributes to input items such as required, or max-length=5
+http://parsleyjs.org/doc/index.html#validators
+
+
+
+
+SESSIONS 
+--------
+
+A session is the period of time that the user stays on the site.
+In larval that’s 120 minutes.
+When a user is in the application, if he does a request that :
+	- takes less than the 120 minutes, laravel consider it as the same session
+	- takes longer than the 120 minutes, laravel consider it as a new session
+
+We can use sessions to store temporarily and non relevant data of our users, like messages
+
+To change/config the app sessions : “config/sessions.php”
+If the ‘driver’ is set to ‘file’, these are found in “storage/framework/sessions/
+
+PASS MESSAGE TO USER
+app/Http/Controllers/PostController.php
+
+Session::put(‘key’, ‘value’) will last the session time, by default the 120 minutes
+
+
+
+
+FLASH MESSAGES
+--------------
+
+Inside sessions, there is a very special session : FLASH SESSION
+A FLASH SESSION is a session that only exists for the very next request.
+These are really good for messages.
+
+PASS SUCCESS MESSAGE TO USER AFTER INSERT POST
+
+	app/Http/Controllers/PostController.php
+
+	Session::flash(‘key’, ‘value’) will last the request. With the new request it will be deleted and give place to a new one.
+
+	USE THE CONTROLLERS TO PASS THE MESSAGES
+	USE THE VIEWS TO DISPLAY THESE MESSAGES
+
+	We will create a partial to show the messages that will load in the main template view file
+
+FOR ERROR MESSAGES
+	Laravel automatically flashes error messages to the flash session
+	Laravel always creates the ‘errors’ flash session, so to check if there is an error, we should verify if it is greater than 0.
+		if(count($errors) > 0)
+
+	The error should be showed in the current view page.
+
+
+
+READ FROM DATABASE
+------------------
+
+Check the routes : php artisan route:list
+
+The read a single post the app will be using the ‘posts.show’ route that has ‘posts/{posts}’ as url, where {posts} is variable data that could be anything from title to body content, id...
+
+We will be using the ‘id’ post data attribute, through which we will get the post title :
+
+we use ‘Eloquent’ to communicate/ make requests to the database : https://laravel.com/docs/master/eloquent
+
+
+
+
+WORKING WITH DATES FROM DATABASE
+--------------------------------
+
+Need to convert the string date to timestamp to be able to use the date functions from php : strtotime()
+
+
+
+
+UPDATE
+------
+
+The ‘create’ and ‘edit’ functions in the controller file are used to create the form. To store the data in the database we use the functions ‘store’ and ‘create’, where we have the form in the ‘create’ method (a view template), that is a get request, and we submit and store it in the database with the ‘store’ method, that is a post request.
+
+The ‘edit’ will be the get request, with the form and data pre-filled to be changed (it’s a view template) and the ‘update’ method will be a post request to store the data in the database.
+
+
+
+
+MODEL FORM BINDING
+------------------
+need to have the laravel form binders setup (installed through laravel collective, the form helpers)
+
+Allows us to pass in a model object ($post) which we pass over the view (withPost($post)). So, in the view, we already have a model object, saved on the variable $post, so we can bind the model onto the form and laravel will autofill the form fields that will have a value in the database.
+
+Instead of Form::open() we will use Form::model(), telling laravel that we are opening a form but need to connect it to a model that we are passing in.
+
+	{!! Form::model($objectModelToBind, array(‘allOther’ => ‘Options’, ‘method’ => ‘toUse’, ‘route’ => ‘toGoTo’, ‘addClasses’ => ‘toTheForm’…) !!}
+
+
+
+
+DELETING
+--------
+
+
+
+
+PAGINATION
+----------
+
+To create a query for pagination, we could do something like :
+	SELECT * FROM ‘posts’ LIMIT 5 OFFSET 10
+And this would give us the 3rd page.
+
+We could change our index() method of our PostController to display the pagination.
+
+We’ll replace
+	$posts = Post::all();
+by
+        $posts = Post::paginate(<items per page>);
+
+To create the links to navigate through pages :
+	{!! $posts->links() !!}
+
+
+
+REORDERING THE POSTS
+--------------------
+
+Just add orderBy() to the post object :
+	$posts = Post::orderBy(<what to order by> , <asc or desc order>)->paginate(<items per page>);
+
+Ordering using indexed columns is faster.
+
+
+
+
+LOCKING CONTENT
+---------------
+
+everything in ‘/posts’ will be backend, accessible only to logged in users, in this case, administrator.
+
+
+
+
+QUERY BUILDER
+-------------
+https://laravel.com/docs/5.4/queries
+
+We use it to more complex queries that are not all(), find()...
+
+
+
+
+SLUGS
+-----
+https://laravel.com/docs/5.4/migrations#creating-columns
+	
+Create a new migration :
+	php artisan make:migration add_slug_to_posts
+
+Add the column in the new migration file :
+	Schema::table('users', function (Blueprint $table) {
+    		$table->string('email');
+	});
+
+If getting a composer.json error when dropping the column :
+	add ‘doctrine/dbal’ dependency to the ‘require-dev’ object in the composer.json
+	then update composer : composer update
+
+For columns that will be accessed/searched a lot, is better to index them :
+	$table->string(‘name’)->unique();
+
+Run the migration :
+	php artisan migrate
+
+	if error due to ‘Integrity constraint violation: 1062 Duplicate entry’, rollback :
+		php artisan migrate:rollback (it will take you back one migration)
+		php artisan migrate:reset (will delete everything your migrations did)
+		php artisan migrate:refresh (will delete everything created with migrations and run the migrations again)
+	then migrate again
+
+DATABASE SEEDING WITH LARAVEL to populate again the database with dummy content
+https://www.youtube.com/watch?v=9mHwCswCeRE
+
+database>seeds>DatabaseSeeder.php
+php artisan db:seed
+
+
+url() it's a helper function that retrieves the base url of our app.
+
+
+IMPLEMENTING THE SLUGS
+----------------------
+resources/routes/web.php
+
+from "php artisan route:list" :
+  posts/{post}
+  posts/{post}/edit
+  ...
+  
+So we can get the "slugs" dynamically in routes like: 
+  Route::get('blog/{slug}', 'PagesController@getAbout');
+  Route::get('blog/{slug}/comment/{id}', 'PagesController@getAbout');
+  ...
+  
+To name a route, we add an array as second parameter : ['as' => 'route.alias', 'uses' => 'ControllerName@methodInTheController']
+
+Run route:list to view the new route
+  if you get "closure" in the action column, it means your route doesn't link to anything
+
+url('blog/'.$post->slug)
+route('blog.single', $post->slug) // from route:list where the url is blog/{slug} for the route blog.single
+
+BUG : when editing a post, only take in consideration the uniqueness of the slug if it has changed
+
+
+
+ADD BLOG CONTROLLER FEATURES
+----------------------------
+
+create a route to the "archives" page where it will display all the posts
+
+
+
+AUTHENTICATION
+--------------
+
+Set up some the needed routes when using Laravel's AuthController
+   "auth/login"
+   "auth/logout"
+   "auth/register"
+   
+Create the views for the login and register forms
+  auth/login.blade.php
+  auth/registr.blade.php
+  
+Show if is logged in
+  {{ Auth::check() ? "Logged in" : "Logged out" }}
+  
+Protect the post pages
+  Lock the access to PostController to guests
+  In PostController
+    public function __construct() {
+      $this->middleware('auth', ['except' => '']);
+    }
+    
+  Fix the redirect to "login" instead of to "auth/login" bug
+    in "app/Exceptions/Handler.php" change "return redirect()->guest(route('login'));" to "return redirect()->guest('auth/login');"
+    
+  If any other errors, see "Http/Middleware" files or "vendor/laravel/framework/Illuminate/Foundation/Auth" files
+  
+  Auth::user() pulls the object user from the current database
+  
+  
+  
+  
+PASSWORD RESETS
+---------------
+"database/migrations/...password_resets_table.php"
+  
+Create a form for typing the email address
+When submited, Laravel will check for that mail and will send an email and token and will store this info in the DB
+ 
+To understand how it works:
+  "Http/Controllers/Auth/ResetPasswordController.php"
+  "vendor/laravel/framework/src/Illuminate/Foundation/Auth/ResetsPasswords"
+
+Set an email as test environment ".env":
+  if using gmail: Allow less secure applications to use gmail
+    MAIL_DRIVER=smtp
+    MAIL_HOST=smtp.gmail.com
+    MAIL_PORT=25
+    MAIL_USERNAME=username@gmail.com
+    MAIL_PASSWORD=gmailpassword
+    MAIL_ENCRYPTION=tls
+    
+  if using mailtrap.io
+    MAIL_DRIVER=smtp
+    MAIL_HOST=smtp.mailtrap.io
+    MAIL_PORT=2525
+    MAIL_USERNAME=8ee62fa9a0474d
+    MAIL_PASSWORD=dfd416416ca1d6
+    MAIL_ENCRYPTION=tls
+  
+    set a default sending email adress in config/mail.php file.
+    
+    Everytime we update the .env we ned to reset the server.
+    
+    Change the default Laravel redirect from "/home" to "/":
+      in the controller, add "protected $redirectTo = '/' "
+
+
+
+
+AUTHENTICATION SHORTCUT (NEW APP)
+---------------------------------
+
+command line :
+  laravel new authentication
+  
+  php artisan make:auth // creates the views necessary for the authentication system (login, register...), home controller and updates the route's file
+  
+  php artisan migrate
+    // to create the authentication tables in the DB
+    // fix error : https://laravel-news.com/laravel-5-4-key-too-long-error
+      // use Illuminate\Support\Facades\Schema;
+      // public function boot()
+      //  {
+      //      // fix [Illuminate\Database\QueryException] SQLSTATE[42000]
+      //      Schema::defaultStringLength(191);
+      //  }
+    // if change .env, need to restart artisan server or it might be database related errors
+  
+  php artisan route:list //to check all routes created by auth
+  
+
+
+
+BLOG CATEGORIES - RELATIONAL DATABASES
+--------------------------------------
+
+Create a "Categories" table to store the categories
+  Controller : php artisan make:model Category
+               /* php artisan make:model Category --migration // creates the model and the migration file */
+  +
+  Migration : php artisan make:migration create_categories_table --create=categories
+                // --create=categories will name the table we want to create with the name "categories"
+                // can see in database/migrations create_categories_table.php that "Schema::create('categories'..."
+                // if you don't use "--create", normally the migration file will be an empty one
+                
+  --create : for new tables
+  --table : for existing tables
+  
+Add a column "category_id" in the "Posts" table to link it with the "Categories" table
+  php artisan make:migration add_category_id_to_posts --table=posts
+  
+  when connecting ids, remember to set the integer as unsigned() (no - or + signal before the number)
+  
+Run the migrations
+  php artisan migrate
+  
+We need to define the relationships in both the controllers : Post and Category
+The relations to define:
+  In Category : 1 category has many posts
+  In Post : 1 post has 1 category
+  
