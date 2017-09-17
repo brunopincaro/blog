@@ -723,7 +723,7 @@ BLOG CATEGORIES - RELATIONAL DATABASES
 --------------------------------------
 
 Create a "Categories" table to store the categories
-  Controller : php artisan make:model Category
+  Model : php artisan make:model Category
                /* php artisan make:model Category --migration // creates the model and the migration file */
   +
   Migration : php artisan make:migration create_categories_table --create=categories
@@ -747,3 +747,32 @@ The relations to define:
   In Category : 1 category has many posts
   In Post : 1 post has 1 category
   
+
+
+CATEGORIES CRUD
+---------------
+Allow users to CRUD categories
+
+Create the controller to our categories
+  php artisan make:controller CategoryController --resource // --resource to automatically create the CRUD methods
+
+Implement the functionalities in the CategoryController.php
+
+Create the necessary routes in routes/web.php
+  use resources() to automatically create the routes for the CRUD
+  use a 3rd parameter "exclude" to tell Laravel not to create a certain route
+  check the routes with php artisan route:list
+
+Create the necessary views
+
+Add the item to the auth() area navigation menu
+
+If error "Class 'App\Http\Controllers\Category' not found"
+  you forgot to namespace the Category Model in the CategoryController : add "use App\Category" at the top
+
+If error "Class 'App\Http\Controllers\Session' not found" :add the code "use Session;" to the CategoryController
+
+To add categories to posts via the application, we are changing the PostController, because we are creating/editing posts
+  when creating a post, have an option to select a category : index() and create()
+  render a dropdown with all the categories in the view
+  modify the store() to accept the category

@@ -26,6 +26,23 @@
                 {{ Form::text('slug', null, array('class' => 'form-control')) }}
             </p>
 
+            <?php
+                /*
+                    select('database_column', array('value="{{ $category->id }}"' => '{{ $category->name }}'), default value, array(<css...>) )
+
+                    this  array('value="{{ $category->id }}"' => '{{ $category->name }}') should be created in the controller
+                */
+            ?>
+            {{ Form::label('category_id', 'Category:') }}
+            {{ Form::select('category_id', $categories, $post->category_id, ['class' => 'form-control'] ) }}
+            <?php
+                /*
+                    $categories is the array in the form array('id' => 'name') : $cats[$category->id] = $category->name;
+
+                    could use 'null' instead of ' $post->category_id' as the default value because of the model form binding will take over and change it to the default value
+                */
+            ?>
+
             <p class="lead">
                 {{ Form::label('body', 'Body:') }}
                 {{ Form::textarea('body', null, array('class' => 'form-control')) }}

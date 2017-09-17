@@ -49,6 +49,12 @@ Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail'
 Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset'); // the action for the reset form submit
 
+/* CATEGORIES */
+// Because we are using the Laravel's CRUD, we use the resource() method to automatically create all the necessary routes
+Route::resource('categories', 'CategoryController', ['except' => ['create']]);
+// 3rd parameter "except" : to tell Laravel not to create a "create" route, because the form will be in the "index" route
+// or 3rd parameter "only" and list all the routes to be created
+
 /* PUBLIC ROUTES */
 
 // route for showing posts publically
@@ -71,4 +77,5 @@ Route::get('contact', 'PagesController@getContact');
 
 Route::get('/', 'PagesController@getIndex');
 
+// Because we are using the Laravel's CRUD, we use the resource() method to automatically create all the necessary routes
 Route::resource('posts', 'PostController');

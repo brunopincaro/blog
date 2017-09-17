@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
+use App\Category;
 use Session;
 
 class PostController extends Controller
@@ -38,8 +39,12 @@ class PostController extends Controller
      */
     public function create()
     {
+        // find all the categories and store it in a variable
+        $categories = Category::all();
+
         // we're just going to show the form to create the post
-        return view('posts.create');
+        // pass the $categories object to the view
+        return view('posts.create')->withCategories($categories);
     }
 
     /**
@@ -56,6 +61,7 @@ class PostController extends Controller
         $this->validate($request, array(
                 'title' => 'required|max:255',
                 'slug' => 'required|alpha_dash|min:5|max:64|unique:posts,slug', // alpha_dash : field under validation may have alpha-numeric characters, as well as dashes and underscores
+                'category_id' => 'required|integer',
                 'body'  => 'required',
             ));
 
@@ -66,15 +72,14 @@ class PostController extends Controller
 
         $post->title = $request->title;
         $post->slug = $request->slug;
+        $post->category_id = $request->category_id;
         $post->body = $request->body;
 
         $post->save();
 
         Session::flash('success', 'Post successfully saved!');
 
-        return redirect()->route('posts.show', $post->id);
-
-        // redirect the user
+        return redirect()->route('posts.show', $post->id); // redirect the user
 
     }
 
@@ -108,8 +113,17 @@ class PostController extends Controller
         // find the post in the database
         $post = Post::find($id);
 
+        //pull the categories
+        $categories = Category::all();
+        // to use the Form::select() helper in the edit post view
+        // need to create an array in the form array('id' => 'name'), where id and name are the columns from the table Categories which were used in the form in the create view : <option value="{{ $category->id }}">{{ $category->name }}</option>
+        $cats = [];
+        foreach ($categories as $category) {
+            $cats[$category->id] = $category->name;
+        }
+
         // return the view and pass that data
-        return view('posts.edit')->withPost($post);
+        return view('posts.edit')->withPost($post)->withCategories($cats);
 
     }
 
@@ -130,12 +144,14 @@ class PostController extends Controller
         if ( $request->input('slug') == $post->slug ) {
             $this->validate($request, array(
                 'title' => 'required|max:255',
+                'category_id' => 'required|integer',
                 'body' => 'required',
             ));
         } else {
             $this->validate($request, array(
-               'title' => 'required|max:255',
+                'title' => 'required|max:255',
                 'slug' => 'required|alpha_dash|min:5|max:64|unique:posts,slug',
+                'category_id' => 'required|integer',
                 'body' => 'required',
             ));
         }
@@ -145,6 +161,7 @@ class PostController extends Controller
 
         $post->title = $request->input('title');
         $post->slug = $request->input('slug');
+        $post->category_id = $request->input('category_id');
         $post->body = $request->input('body');
 
         $post->save();
