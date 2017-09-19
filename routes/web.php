@@ -55,6 +55,9 @@ Route::resource('categories', 'CategoryController', ['except' => ['create']]);
 // 3rd parameter "except" : to tell Laravel not to create a "create" route, because the form will be in the "index" route
 // or 3rd parameter "only" and list all the routes to be created
 
+/* TAGS */
+Route::resource('tags', 'TagController', ['except' => ['create']]);
+
 /* PUBLIC ROUTES */
 
 // route for showing posts publically

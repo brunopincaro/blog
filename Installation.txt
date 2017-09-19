@@ -238,6 +238,7 @@ Call the partials with @include(‘path.to.partials._file’)
 
 MODEL BASICS
 ------------
+The Model is used to talk to the database;
 
 A model relates to a table and is how the program talks back and forward, sets information and gets information from the database table
 
@@ -776,3 +777,47 @@ To add categories to posts via the application, we are changing the PostControll
   when creating a post, have an option to select a category : index() and create()
   render a dropdown with all the categories in the view
   modify the store() to accept the category
+  
+
+
+MANY TO MANY RELATIONSHIPS : TAGS
+---------------------------------
+need an intermediary table :
+
+          tag_post
+  -------------------------
+  | id | tag_id | post_id |
+  |----|--------|---------|
+  |----|--------|---------|
+  |----|--------|---------|
+
+belongsToMany('Model Name', 'intermediatary_table_name', 'model_id', 'joining_id') 
+  Model Name : the namespace to the model, in this case the Post model path is "App\Post" (required)
+  intermediatary_table_name : Laravel expects up the name in alphabetical order with the two models "post_tag" (optional but suggested)
+  model_id : column name for the foreign key in current model, 'post_id' (optional)
+  joining_id : column name for the joinning model, which column to link to : tag_id, it should correspond with the model in 'Model Name' (optional)
+  
+
+
+
+BUILDING THE TAG SYSTEM
+-----------------------
+
+Create the Tag Model and migration : php artisan make:model Tag --migration
+Define the relation belongsToMany() in each Model : Post.php and Tag.php
+The migration file is creating the table that is going to store the tags
+The pivot/midle table that is going to link the tags and posts is needed : post_tag
+  php artisan make:migration create_post_tag_table
+
+
+
+TAG CRUD
+--------
+Create the CRUD controller for the Tags
+  php artisan make:controller TagController --resource
+  
+The implementation would be similiar to Categories
+
+ADD TAG UX / UI
+---------------
+
