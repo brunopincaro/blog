@@ -4,6 +4,7 @@
 
 @section('stylesheets')
 	{!! Html::style('css/parsley.css') !!}
+	{!! Html::style('css/select2.min.css') !!}
 @stop
 
 @section('content')
@@ -22,9 +23,16 @@
 
 				{{ Form::label('category_id', 'Category:') }}
 				<select name="category_id" class="form-control">
-					<?php /* We name it as "category_id" to match the column on the posts table */ ?>
 					@foreach($categories as $category)
 						<option value="{{ $category->id }}">{{ $category->name }}</option>
+					@endforeach
+				</select>
+
+				{{ Form::label('tags', 'Tags:') }}
+				<select name="tags[]" class="form-control select2-multi" multiple="multiple">
+					<?php /* We name it as "category_id" to match the column on the posts table */ ?>
+					@foreach($tags as $tag)
+						<option value="{{ $tag->id }}">{{ $tag->name }}</option>
 					@endforeach
 				</select>
 
@@ -40,4 +48,9 @@
 
 @section('scripts')
 	{!! Html::script('js/parsley.min.js') !!}
+	{!! Html::script('js/select2.min.js') !!}
+
+	<script>
+		$('.select2-multi').select2();
+	</script>
 @stop

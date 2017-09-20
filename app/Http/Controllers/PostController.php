@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
+use App\Tag;
 use App\Category;
 use Session;
 
@@ -42,9 +43,12 @@ class PostController extends Controller
         // find all the categories and store it in a variable
         $categories = Category::all();
 
+        // find all the tags and store it in a variable
+        $tags = Tag::all();
+
         // we're just going to show the form to create the post
         // pass the $categories object to the view
-        return view('posts.create')->withCategories($categories);
+        return view('posts.create')->withCategories($categories)->withTags($tags);
     }
 
     /**
@@ -55,6 +59,8 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        # dd($request);
+
         // works as a post request, and pulls all the data from the $request
 
         // validate the data
@@ -76,6 +82,10 @@ class PostController extends Controller
         $post->body = $request->body;
 
         $post->save();
+
+        // save the association array after save the post and before the success message
+        // $post->tags() : set the association -> sync( array('of all the items to attach'), false) : that will actually create that relation and syncs that up;
+        $post->tags()->sync($request->tags, false); // setting to false we're telling not to overwrite the existing association
 
         Session::flash('success', 'Post successfully saved!');
 
@@ -122,8 +132,27 @@ class PostController extends Controller
             $cats[$category->id] = $category->name;
         }
 
+        $tags = Tag::all();
+        $tags_updated = [];
+        foreach ($tags as $tag) {
+            $tags_updated[$tag->id] = $tag->name;
+        }
+
         // return the view and pass that data
-        return view('posts.edit')->withPost($post)->withCategories($cats);
+        return view('posts.edit')->withPost($post)->withCategories($cats)->withTags($tags_updated);
+
+        /*
+        THE LARAVEL WAY
+        ---------------
+        https://laravel.com/docs/5.4/collections
+        pluck() : The "pluck" method retrieves all of the values for a given key
+
+        $categories = Category::pluck('name', 'id');
+
+        $tags = Tag::pluck('name', 'id');
+
+        return view('posts.edit')->withCategories($categories)->withTags($tags);
+        */
 
     }
 
@@ -165,6 +194,8 @@ class PostController extends Controller
         $post->body = $request->input('body');
 
         $post->save();
+
+        $post->tags()->sync($request->tags, true); // here will use true, to overwrite them because we are updating
 
         // Set flash data with success message
         Session::flash('success', 'Post successfully updated!');

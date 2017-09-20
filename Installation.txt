@@ -820,4 +820,21 @@ The implementation would be similiar to Categories
 
 ADD TAG UX / UI
 ---------------
+To be able to select multiple tags : https://select2.org/
+Load the script only on the needed pages :
+  posts/create.blade.php
+  posts/edit.blade.php
+Add the tag multitple="multiple" to the select form to allow multiple options
+Add the jquery script
 
+If working with post views, need to fetch the tags in postcontroler
+  in create()
+  in store() : need to pass an array of all the selected tags (in create.blade.php, the select tags should be named as an array : name="tags[]" )
+  in edit()
+  in update()
+
+To save this tags in associative array in Laravel
+  attatching this associoations happens after save() the post and before the sucess message
+
+SHOW, EDIT, UPDATE TAGS
+-----------------------

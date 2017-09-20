@@ -2,6 +2,10 @@
 
 @section('title', ' - edit blog post')
 
+@section('stylesheets')
+    {!! Html::style('css/select2.min.css') !!}
+@stop
+
 @section('content')
     <div class="row">
 
@@ -42,6 +46,9 @@
                     could use 'null' instead of ' $post->category_id' as the default value because of the model form binding will take over and change it to the default value
                 */
             ?>
+
+            {{ Form::label('tags', 'Tags:') }}
+            {{ Form::select('tags[]', $tags, null, ['class' => 'form-control select2-multi', 'multiple' => "multiple"] ) }}
 
             <p class="lead">
                 {{ Form::label('body', 'Body:') }}
@@ -85,4 +92,12 @@
         </div>
         {!! Form::close() !!}
     </div>
+@stop
+
+@section('scripts')
+    {!! Html::script('js/select2.min.js') !!}
+
+    <script>
+        $('.select2-multi').select2();
+    </script>
 @stop

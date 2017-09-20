@@ -10,6 +10,15 @@
 			<p class="lead">
 				{{ $post->body }}
 			</p>
+
+			<hr>
+			<div class="tags">
+			@foreach($post->tags as $tag)
+				<span class="badge badge-secondary">
+					{{ $tag->name }}
+				</span>
+			@endforeach
+			</div>
 		</div>
 
 		<div class="col-md-4">
