@@ -838,3 +838,5 @@ To save this tags in associative array in Laravel
 
 SHOW, EDIT, UPDATE TAGS
 -----------------------
+TagController.php
+

@@ -10,7 +10,7 @@ class Tag extends Model
     //the posts that belong to the tag
     public function posts()
     {
-    	return $this->belongsToMany('App\Post', ''); //need to create the inverse in the Post Model so this could function
+    	return $this->belongsToMany('App\Post'); //need to create the inverse in the Post Model so this could function
 
     	//we're following the Laravel convention :
 
