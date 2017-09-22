@@ -4,7 +4,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
 use App\Post;
+use Mail;
+use Session;
 
 class PagesController extends Controller {
 	// every page is going to be an action, and each action is a function
@@ -42,6 +47,44 @@ class PagesController extends Controller {
 
 	public function getContact() {
 		return view('pages.contact');
+	}
+
+	public function postContact(Request $request) { // need to namespace Request at te top
+		$this->validate($request, [
+			'email' => 'required|email',
+			'subject' => 'min:3|max:255',
+			'message' => 'required|min:10|max:200'
+		]);
+
+		$email = array(
+			'email' => $request->email,
+			'subject' => $request->subject,
+			'msg' =>$request->message // the word 'message' is reserved to Laravel's mailing system, need to choose another one like 'msg'
+		);
+
+		// Put the fields in the email
+		// https://laravel.com/docs/5.4/mail
+
+		// Don't forget to namespace Mail : use Illuminate\Support\Facades\Mail;
+		// Mail::queue(); // if sending lots of emails
+		
+		// send('view', $data, function() { //will contain all the header information for the email : to, from, ... })
+		Mail::send('emails.contact', $email, function( $message ) use ($email) {
+			$message->from($email['email']);
+			$message->to('brunopraia@gmail.com');
+			$message->subject($email['subject']);
+		});
+
+		// to pass data to a function "use($dataToPass)"
+
+		// Laravel will create a variable with the name of every 'key' in the $email array
+		// In the view, will access te values by using this variables that Laravel created, instead of using $email['email'], ...
+		// In case in the array 'msg' => ['q1' => 'hello', 'q2' => 'world'], we would reference in the view with $msg['q1'], $msg['q2'], ...
+
+		Session::flash('success', 'Your message was sent.');
+
+		// return redirect()->url('/');
+		return redirect('/'); // Laravel 5.4
 	}
 }
 ?>

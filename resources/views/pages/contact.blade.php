@@ -8,7 +8,7 @@
                 	<h1>Drop me a line or two...</h1>
                 	<hr>
 
-                	<form>
+                	<form action="{{ url('contact') }}" method="POST"> <?php #Used url() instead of route() in the form action because we didn't set up named routes for the contact ?>
                 		<div class="form-group">
                 			<label name="email">Email:</label>
                 			<input type="" name="email" id="email" class="form-control">
@@ -25,6 +25,8 @@
                 		</div>
 
                 		<input type="submit" name="send" value="Send message" class="btn btn-success">
+
+                        {{ csrf_field() }} <?php # csrf_field() will create a hidden field with the token, use this when hardcoding forms; # use csrf_token() to display the token?>
                 	</form>
                 </div>
             </div>

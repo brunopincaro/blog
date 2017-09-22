@@ -848,3 +848,25 @@ Delete items in the many-to-many relationships (the pivot table that links the b
 
 	Need to add the "DELETE" method to remove the tags (see "php artisan route:list") :
 		create a form with a delete tag button in tags/show.blade.php
+
+		
+		
+
+SENDING EMAIL FROM THE CONTACT FORM
+-----------------------------------
+pages/contact.blade.php
+
+Laravel’s mail system is based on SwiftMailer library.
+
+If several users sending several mails a day, better use the mail providers api instead of smtp.
+
+For production : config/mail.php
+For development : .env file // this file override the config/*.php files
+
+need route to :
+	- go to contact form : routes/web.php already created "contact" route preaviously
+	- send/submit the contact form
+	
+	Used url() instead of route() in the form action because we didn't set up named routes for the contact
+	
+	
