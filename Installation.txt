@@ -840,3 +840,11 @@ SHOW, EDIT, UPDATE TAGS
 -----------------------
 TagController.php
 
+DELETE
+------
+Delete items in the many-to-many relationships (the pivot table that links the both tables) : after deleting the data from one table, need to unlink the relationship between the two tables in the pivot table
+
+	Use the detach() method in both the PostController and TagController destroy() method.
+
+	Need to add the "DELETE" method to remove the tags (see "php artisan route:list") :
+		create a form with a delete tag button in tags/show.blade.php

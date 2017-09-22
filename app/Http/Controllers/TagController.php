@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Tag; // use the tag model
+use App\Post; // use the post model
 use Session;
 
 class TagController extends Controller
@@ -115,6 +116,16 @@ class TagController extends Controller
      */
     public function destroy($id)
     {
-        //
-    }
+        // find the tag to delete by id
+        $tag = Tag::find($id);
+
+        // remove the many-to-many relationship taht was set up previously with posts
+        // need to reference posts so that Laravel knows what relationship to detach : to reference the Post model "->posts()"
+        $tag->posts()->detach();
+
+        $tag->delete();
+
+        Session::flash('success', 'Tag successfully deleted!');
+
+        return redirect()->route('tags.index');    }
 }

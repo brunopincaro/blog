@@ -215,6 +215,10 @@ class PostController extends Controller
         // find the post to delete by id
         $post = Post::find($id);
 
+        // remove the many-to-many relationship taht was set up previously with tags
+        // need to reference tags so that Laravel knows what relationship to detach : to reference the Tag model "->tags()"
+        $post->tags()->detach();
+
         $post->delete();
 
         Session::flash('success', 'Post successfully deleted!');
