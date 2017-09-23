@@ -897,6 +897,7 @@ Create the routes for the comment resource
 
 Add the comment form in the blog/single.blade.php file
 
+
 STYLE THE COMMENTS
 ------------------
 http://demo.mekshq.com/?theme=vlog
@@ -905,3 +906,16 @@ to the image gravatar we need to create a link to the image : https://secure.gra
   https://www.gravatar.com/avatar/HASH?parameters
   from the gravatar api need an email address to create the hash : https://secure.gravatar.com/site/implement/hash/
 
+
+MANAGING COMMENTS
+-----------------
+in posts/single.blade.php
+
+create the remaining routes
+
+attention to the access to the comments managing system
+
+
+
+ADDING A WYSIWYG EDITOR
+-----------------------
