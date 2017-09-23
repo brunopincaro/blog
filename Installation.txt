@@ -27,6 +27,10 @@ PHP		BLADE
 echo		{{ }}
 execute code	{!! !!} loads raw code, keeping all the html, javascript, php... tag
 
+in blade files, for security reasons when accessing passed data allways escape it by htmlspecialchars( $data ) : 
+  the Laravel way of escaping is {{{ $data }}} is equivalent to "<?php echo e($data); ?>"
+	outside the blade template file you can use "e($data)"
+
 
 
 USING CLASSES
@@ -869,4 +873,35 @@ need route to :
 	
 	Used url() instead of route() in the form action because we didn't set up named routes for the contact
 	
-	
+
+
+
+ADDING COMMENTS
+---------------
+
+create Comment model with migration (php artisan make:model Comment --migration)
+
+define the comments table in the migration file and run the migration command
+  if getting an error related to foreign key:
+  1. Need to first create the column post_id and only after we can define the foreign key relationship in a separate Schemas::create()
+  2. Or, simply add unsigned() to the foreign key when defining it
+
+Set up the relationship in the Comment and Post model
+  a post can have many comments
+  a comment belongs to a post
+  
+Create the controller and resources with artisan
+  php artisan make:controller CommentController --resource
+
+Create the routes for the comment resource
+
+Add the comment form in the blog/single.blade.php file
+
+STYLE THE COMMENTS
+------------------
+http://demo.mekshq.com/?theme=vlog
+
+to the image gravatar we need to create a link to the image : https://secure.gravatar.com/site/implement/images/
+  https://www.gravatar.com/avatar/HASH?parameters
+  from the gravatar api need an email address to create the hash : https://secure.gravatar.com/site/implement/hash/
+

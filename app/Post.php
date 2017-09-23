@@ -26,4 +26,10 @@ class Post extends Model
 
     	//because we're in the Post Model, the model_id would be the column "post_id"
     }
+
+    // a post can have many comments
+    public function comments()
+    {
+        return $this->hasMany('App\Comment');
+    }
 }

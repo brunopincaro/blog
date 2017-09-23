@@ -58,6 +58,10 @@ Route::resource('categories', 'CategoryController', ['except' => ['create']]);
 /* TAGS */
 Route::resource('tags', 'TagController', ['except' => ['create']]);
 
+/* COMMENTS */
+// Manually setting the comments routes instead of using the ::resources() method
+Route::post('comments/{post_id}', ['uses' => 'CommentController@store', 'as' => 'comments.store'] );
+
 /* PUBLIC ROUTES */
 
 // route for showing posts publically
