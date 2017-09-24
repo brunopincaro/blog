@@ -972,3 +972,41 @@ https://github.com/mewebstudio/Purifier#configuration
   php artisan vendor:publish --provider="Mews\Purifier\PurifierServiceProvider"
   
   the new config file is in config/purifier.php
+
+
+
+IMAGE UPLOAD
+------------
+Not doing it for cloud storage (like Amazon S3), for local storage
+
+To store locally on the server, use "storage" folder, specially files to keep protected from the internet
+This folder is not available to the public, there is no url, you can't access it directly.
+Downside, need to make special requests, almost as an API request, to access the files in "storage".
+We'll be using the 'public' folder because the images are for posts, they should be easeally accessible.
+Create the folder 'images' in 'public'.
+
+Not using Laravel's "Filesystem / Cloud storage", as it doesn't have enough built in options for dealing with images.
+
+Instead, will use an image system, "image intervention": http://image.intervention.io/
+  composer require intervention/image
+  
+  In the config/app.php
+    $providers : Intervention\Image\ImageServiceProvider::class,
+    $aliases array: 'Image' => Intervention\Image\Facades\Image::class,
+    Configuration: php artisan vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravel5"
+
+Create an input to upload the images to our posts in the posts/create.blade.php
+
+Everytime we'll have a file input type in a form, need to sert the parameter files => true in the form oppening tag.
+
+Create a migration to add a column to the posts table to store the image file name
+  php artisan make:migration add_image_col_to_posts --table=posts
+  do the necessary changes in the migration file
+  migrate the file
+    php artisan migrate
+  
+Do the necessary changes in PostController
+  store()
+
+Show the image in the posts
+  bloag/single.blade.php

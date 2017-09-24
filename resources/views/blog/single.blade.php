@@ -11,6 +11,7 @@
 
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
+			<img src="{{ asset('images/' . $post->image) }}" alt="{{ $post->title }}">
 			<h1>{{ $post->title }}</h1>
 			<p>{!! $post->body !!}</p>
 			<hr>
@@ -20,7 +21,7 @@
 				because there's a relationship between the tables posts and categories, we can access the information on the other table this way
 
 				$post is an object of the Post model
-				category property is the method Post's method category() that initiates the relationship 
+				category property is the method Post's method category() that initiates the relationship
 				*/
 			?>
 		</div>
@@ -68,7 +69,7 @@
 					<div class="col-md-12">
 						{{ Form::label('comment', 'Comment:') }}
 						{{ Form::textarea('comment', null, ['class' => 'form-control', 'rows' => '5']) }}
-					
+
 						{{ Form::submit('Send comment', ['class' => 'btn btn-success btn-block', 'style' => 'margin-top: 20px;']) }}
 					</div>
 				</div>

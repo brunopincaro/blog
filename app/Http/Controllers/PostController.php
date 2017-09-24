@@ -8,6 +8,7 @@ use App\Tag;
 use App\Category;
 use Session;
 use Purifier;
+use Image;
 
 class PostController extends Controller
 {
@@ -81,6 +82,30 @@ class PostController extends Controller
         $post->slug = $request->slug;
         $post->category_id = $request->category_id;
         $post->body = Purifier::clean($request->body);
+
+        //save the image
+        if ($request->hasfile('featured_image')) {
+          //grab the file from the request
+          $image = $request->file('featured_image');
+
+          //rename to a unique name the uploaded file
+          //  - new name for the file + file extension
+          //could be done by using:
+          //  - timestamps: time()
+          //  - post id: $post->id
+          $filename = time() . "." . $image->getClientOriginalExtension(); //can reencode the file type by using encode('file extension') instead original extension
+
+          //define the file location
+          //if storing in the "storage" folder: storage_path('');
+          $location = public_path('images/' . $filename); //asset() creates the url, we whant the path to the public folder
+
+          //create an the $image object and upload it with save()
+          Image::make($image)->resize(800, 400)->save($location);
+          //make() will create an image object to which we can pass any settings
+
+          //save it to the database
+          $post->image = $filename;
+        }
 
         $post->save();
 

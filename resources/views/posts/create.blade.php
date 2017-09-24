@@ -22,7 +22,7 @@
 			<h1>Create new post</h1>
 			<hr>
 
-			{!! Form::open(array('route' => 'posts.store', 'data-parsley-validate' => '')) !!}
+			{!! Form::open(array('route' => 'posts.store', 'data-parsley-validate' => '', 'files' => true)) !!}
     			{{ Form::label('title', "Title:") }}
     			{{ Form::text('title', null, array('class' => 'form-control', 'required' => '', 'maxlength' => '255')) }}
 
@@ -35,6 +35,9 @@
 						<option value="{{ $category->id }}">{{ $category->name }}</option>
 					@endforeach
 				</select>
+
+				{{ Form::label('featured_image', 'Upload the featured image') }}
+				{{ Form::file('featured_image', ['class' => 'form-control-file']) }}
 
 				{{ Form::label('tags', 'Tags:') }}
 				<select name="tags[]" class="form-control select2-multi" multiple="multiple">
