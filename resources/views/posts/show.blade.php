@@ -8,7 +8,7 @@
 			<h1>{{ $post->title }}</h1>
 
 			<p class="lead">
-				{{ $post->body }}
+				{!! $post->body !!}
 			</p>
 
 			<hr>

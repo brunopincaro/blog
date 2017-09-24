@@ -24,7 +24,7 @@ BLADE TEMPLATING
 ----------------
 
 PHP		BLADE
-echo		{{ }}
+echo		{{ }} // outputs the code by stripping all html tags with the htmlspecialchars() function
 execute code	{!! !!} loads raw code, keeping all the html, javascript, php... tag
 
 in blade files, for security reasons when accessing passed data allways escape it by htmlspecialchars( $data ) : 
@@ -919,3 +919,56 @@ attention to the access to the comments managing system
 
 ADDING A WYSIWYG EDITOR
 -----------------------
+http://jejacks0n.github.io/mercury/documentation/
+
+be using https://www.tinymce.com/
+  use the editor in the posts/create and posts/edit views
+
+to fix the error with parsley:
+  remove the required field on the textarea on the post form
+  
+  
+  
+OUTPUT HTML FROM DB
+-------------------
+replace the blade {{ }} by {!! !!} for the output of $post->body
+  posts/show.blade.php
+  blog/single.blade.php
+
+To only show the text without the tags, to get a plein text : strip_tags()
+  pages/home.blade.php
+  blog/index.blade.php
+  posts/index.blade.php
+
+SECURITY CONCERNS
+-----------------
+http://www.bioinformatics.org/phplabware/internal_utilities/htmLawed/index.php
+http://htmlpurifier.org/
+
+Be using "Laravel purifier"
+  https://github.com/mewebstudio/Purifier
+  
+  composer require mews/purifier
+  
+  in config/app.php
+    'providers' => [
+        // ...
+        Mews\Purifier\PurifierServiceProvider::class,
+    ]
+    
+  in app/config/app.php
+    'aliases' => [
+        // ...
+        'Purifier' => Mews\Purifier\Facades\Purifier::class,
+    ]
+  
+Filter the data in the PostController: "Purifier::clean()"
+  store()
+  update()
+  
+Create the config file for "Laravel Purifier" to decide what HTML tags not to ignore: H1...
+https://github.com/mewebstudio/Purifier#configuration
+
+  php artisan vendor:publish --provider="Mews\Purifier\PurifierServiceProvider"
+  
+  the new config file is in config/purifier.php

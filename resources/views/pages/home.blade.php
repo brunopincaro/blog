@@ -24,7 +24,7 @@
                         <small>{{ date_format($post->updated_at, 'Y-m-d') }}</small>
 
                         <p>
-                            {{ substr($post->body, 0, 300) }} {{ strlen($post->body) > 300 ? '...' : '' }}
+                            {{ substr(strip_tags($post->body), 0, 300) }} {{ strlen(strip_tags($post->body)) > 300 ? '...' : '' }}
                         </p>
 
                         <a href="{{ url('blog/'.$post->slug) }}" class="btn btn-primary">Read more</a>

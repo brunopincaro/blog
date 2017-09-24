@@ -35,7 +35,7 @@
 						<tr>
 							<th>{{ $post->id }}</th>
 							<td>{{ $post->title }}</td>
-							<td>{{ substr($post->body, 0, 100) }} {{ ( strlen($post->body) > 160 ) ? "..." : "" }}</td>
+							<td>{{ substr( strip_tags($post->body), 0, 100) }} {{ ( strlen( strip_tags($post->body)) > 160 ) ? "..." : "" }}</td>
 							<td>{{ date( 'Y M d, H:i', strtotime($post->created_at)) }}</td>
 							<td>
 								{!! Html::linkRoute('posts.show', 'View', array($post->id), array('class' => 'btn btn-sm btn-default')) !!}

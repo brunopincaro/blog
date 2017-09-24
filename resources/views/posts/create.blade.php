@@ -5,6 +5,14 @@
 @section('stylesheets')
 	{!! Html::style('css/parsley.css') !!}
 	{!! Html::style('css/select2.min.css') !!}
+	<script src="https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=uq8y2r1sp169la0l8nlw9qcyevls79tzpsgwmgytjgcy3gl4"></script>
+	<script>
+		tinymce.init({
+			selector:'textarea',
+            plugins: "link code image imagetools",
+            menubar: false
+		});
+	</script>
 @stop
 
 @section('content')
@@ -37,7 +45,7 @@
 				</select>
 
 				{{ Form::label('body', "Post:")}}
-				{{ Form::textarea('body', null, array('class' => 'form-control', 'required' => '')) }}
+				{{ Form::textarea('body', null, array('class' => 'form-control')) }}
 
 				{{ Form::submit('Create post', array('class' => 'btn btn-success btn-lg btn-block', 'style' => 'margin-top:20px')) }}
 			{!! Form::close() !!}

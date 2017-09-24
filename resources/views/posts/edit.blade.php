@@ -4,6 +4,17 @@
 
 @section('stylesheets')
     {!! Html::style('css/select2.min.css') !!}
+    <script src="https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=uq8y2r1sp169la0l8nlw9qcyevls79tzpsgwmgytjgcy3gl4"></script>
+    <script>
+        tinymce.init({
+            selector:'textarea',
+            plugins: "link code image imagetools",
+            menubar: false
+        });
+    </script>
+    <?php
+        // because it loads asynchronosly we can load it on top
+    ?>
 @stop
 
 @section('content')
