@@ -20,7 +20,7 @@
 @section('content')
     <div class="row">
 
-        {!! Form::model($post, array('route' => array('posts.update',$post->id ),'method' => 'PUT')) !!}
+        {!! Form::model($post, array('route' => array('posts.update',$post->id ),'method' => 'PUT', 'files' => true)) !!}
         <?php
             // $post is the object model that contains the data and that we want the form to bind with
             // route points to the view where to go after click submit
@@ -60,6 +60,9 @@
 
             {{ Form::label('tags', 'Tags:') }}
             {{ Form::select('tags[]', $tags, null, ['class' => 'form-control select2-multi', 'multiple' => "multiple"] ) }}
+
+            {{ Form::label('featured_image', 'Update featured image:') }}
+            {{ Form::file('featured_image') }}
 
             <p class="lead">
                 {{ Form::label('body', 'Body:') }}

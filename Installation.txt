@@ -1,6 +1,8 @@
 https://laravelcollective.com/
 http://laravel-recipes.com/
 https://laravel.com/
+livecoding.tv/jacurtis
+
 
 To put a site online, change the .env from ‘development’ to ‘production’
 
@@ -1010,3 +1012,14 @@ Do the necessary changes in PostController
 
 Show the image in the posts
   bloag/single.blade.php
+
+VALIDATING, UPDATING, DELETING IMAGES
+-------------------------------------
+
+Validate:
+	PostController@store: 'featred_image' => 'sometimes|image'
+
+Editing:
+	add "files => true" in the form and add the file update field in posts/edit.blade.php
+	PostController@update:
+		to delete a file, we need to use the "storage façade"

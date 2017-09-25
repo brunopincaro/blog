@@ -9,6 +9,7 @@ use App\Category;
 use Session;
 use Purifier;
 use Image;
+use Storage;
 
 class PostController extends Controller
 {
@@ -71,6 +72,7 @@ class PostController extends Controller
                 'slug' => 'required|alpha_dash|min:5|max:64|unique:posts,slug', // alpha_dash : field under validation may have alpha-numeric characters, as well as dashes and underscores
                 'category_id' => 'required|integer',
                 'body'  => 'required',
+                'featured_image' => 'sometimes|image', //'sometimes' means the field is not required but to validate if there is something there
             ));
 
         // All the code from this point on will only run if the validation() succeeds, else, it will run the create()
@@ -196,6 +198,10 @@ class PostController extends Controller
         // check if slug has changed
         $post = Post::find($id);
 
+        
+        /*
+          To render it unique, we'll be adding the post id to the slug and by doing it so, we don't need to use the if statement that follows
+
         if ( $request->input('slug') == $post->slug ) {
             $this->validate($request, array(
                 'title' => 'required|max:255',
@@ -210,6 +216,15 @@ class PostController extends Controller
                 'body' => 'required',
             ));
         }
+        */
+
+        $this->validate($request, array(
+                'title' => 'required|max:255',
+                'slug' => "required|alpha_dash|min:5|max:64|unique:posts,slug,$id", //the 'unique' parameter allows several fields to be unique; must use "" instead of '' so that the $var will be rendered
+                'category_id' => 'required|integer',
+                'body' => 'required',
+                'featured_image' => 'image',
+            ));
 
         // Save the data to the database
         $post = Post::find($id); // find the post by id to update
@@ -218,6 +233,29 @@ class PostController extends Controller
         $post->slug = $request->input('slug');
         $post->category_id = $request->input('category_id');
         $post->body = Purifier::clean($request->input('body'));
+
+        //check if a new image was added to replace the old one
+        if ( $request->hasFile('featured_image') ) {
+
+          //add the new image
+          $image = $request->file('featured_image');
+          $filename = time() . "." . $image->getClientOriginalExtension();
+          $location = public_path('images/' . $filename);
+          
+          Image::make($image)->resize(800, 400)->save($location);
+
+          $oldFileName = $post->image; //get the name of the old file for deleting
+
+          //update the DB
+          $post->image = $filename;
+
+          //delete the old image
+          //to delete files, we use the "Storage facade"
+          //to use the "Storage façade" we need to define the disk in the config/filesystems.php file from storage_path('app') to public_path('imaes/')
+          Storage::delete($oldFileName);
+
+          //File::delete(public_path('images/'. $oldFileName)); //like so, won't be needing changing the filesystem﻿
+        }
 
         $post->save();
 
@@ -244,6 +282,9 @@ class PostController extends Controller
         // remove the many-to-many relationship taht was set up previously with tags
         // need to reference tags so that Laravel knows what relationship to detach : to reference the Tag model "->tags()"
         $post->tags()->detach();
+
+        //delete the image file associated to this post
+        Storage::delete($post->image);
 
         $post->delete();
 
